@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MNIST Grad-CAM Visualization</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+</head>
+<body>
+	<div class="container">
+		<h1>MNIST with Class Activation Map</h1>
+		<div class="row">
+			<!------------------------ Left column ------------------------>
+			<div class="col-md-6">
+			<p>Draw a digit here!</p>
+			<canvas id="main" widhth="449" height="449" style="cursor: default;"></canvas>
+			<p>
+				<button id="clear" class="btn btn-default">clear</button>
+				<p id='log'></p>
+			</p>
+			</div>
+			<!------------------------ Right column ------------------------>
+			<div class="col-md-6">
+				<div class="col-md-4">
+					<p>Input:</p>
+					<canvas id="input" style="border:1px solid" width="140" height="140"></canvas>
+				</div>
+				<div class="col-md-4">
+					<p>Grad-CAM:</p>
+					<canvas id="cam" style="border:1px solid" width="140" height="140"></canvas>
+				</div>
+				<div class="col-md-4">
+					<p>Guided Grad-CAM:</p>
+					<canvas id="guided-cam" style="border:1px solid" width="140" height="140"></canvas>
+				</div>
+				<hr>
+				<p>output:</p>
+				<table id="output" class="table">
+					<tbody>
+						<tr>
+							<th class="col-md-1"></th>
+							<th class="col-md-2">Prediction (0-1)</th>
+						</tr>
+						<tr>
+							<td>0</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>1</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>4</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>5</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>6</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>7</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>8</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>9</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>	
+		</div>
+	</div>
+</body>
+</html>

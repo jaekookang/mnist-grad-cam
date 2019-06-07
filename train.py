@@ -4,7 +4,6 @@ Train MNIST dataset using CNN
 ref:
 - https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
 '''
-import ipdb as pdb
 from time import strftime, gmtime
 
 import keras

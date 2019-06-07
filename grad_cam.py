@@ -16,19 +16,27 @@ from keras.models import Model
 from keras.models import load_model
 from train import prepare_mnist
 from keras import backend as K
+from keras.backend import clear_session
+
 
 # Make Grad-CAM visualization
 
-def make_heatmap(model, input_file, out_dir):
+def make_heatmap(input_file, out_dir, save_output=True):
+    # Load model
+    clear_session() # <= This is crucial!
+    model = load_model('model/mnist_2019-06-02')
     # Process image
     nrow, ncol = 28, 28
-    img_3d = cv2.imread(img_file, 1) # RGB
-    img = cv2.imread(img_file, 0) # grayscale
-    image_id = os.path.basename(img_file).split('.')[0]
-    
-    img_resized = cv2.resize(img, (nrow, ncol))
-    img_resized = img_resized/img_resized.max()
-    img_resized = img_resized.astype('float32')
+    img_3d = cv2.imread(input_file, 1) # RGB
+    img = cv2.imread(input_file, 0) # grayscale
+    image_id = os.path.basename(input_file).split('.')[0]
+    if (img.shape[0] > 28) | (img.shape[1] > 28):
+        img_resized = cv2.resize(img, (nrow, ncol))
+        img_resized = img_resized/img_resized.max()
+        img_resized = img_resized.astype('float32')
+    else:
+        img_resized = img/img.max()
+        img_resized = img_resized.astype('float32')
     
     # Predict number
     pred_out = model.predict(
@@ -64,10 +72,14 @@ def make_heatmap(model, input_file, out_dir):
     heatmap_resized = np.uint8(255*heatmap_resized)
     heatmap_resized = cv2.applyColorMap(heatmap_resized, cv2.COLORMAP_JET)
     # Apply heatmap on to the original image
-    superimposed_img = heatmap_resized*0.5 + img_3d
+    # superimposed_img = heatmap_resized*0.5 + (255-img_3d)
+    superimposed_img = 255 - heatmap_resized*0.5 # the smaller, the more active!
     # Save
-    cv2.imwrite(os.path.join(out_dir, image_id+'.jpg'), superimposed_img);
-    print('Saved')
+    if save_output:
+        cv2.imwrite(os.path.join(out_dir, image_id+'_gradcam.jpg'), superimposed_img);
+        print('Saved')
+    clear_session()
+    return pred_out, superimposed_img
 
 if __name__ == '__main__':
     # Inputs
@@ -75,6 +87,6 @@ if __name__ == '__main__':
     out_dir = sys.argv[2]
 
     # Load model
-    model = load_model('model/mnist_2019-06-02')
+    # model = load_model('model/mnist_2019-06-02')
 
-    make_heatmap(model, img_file, out_dir)
+    make_heatmap(img_file, out_dir)
