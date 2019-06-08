@@ -7,29 +7,33 @@ Grad-CAM visualization on the web
 - [] Add inference code
 - [] Make static/main.js
 '''
-import ipdb as pdb
 import os
 import cv2
 import numpy as np
-import ipdb as pdb
 
 from keras.models import load_model
-from grad_cam import make_heatmap
+from gradcam import compute_saliency
 from keras.backend import clear_session
 
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
+outdir = 'static/outputs'
+img_file = os.path.join(outdir, 'number.jpg')
+layer_name = 'conv2d_2'
+
+
 # Load model
 
-@app.route('/api/mnist', methods=['POST'])
+@app.route('/mnist', methods=['POST'])
 def mnist():
 	# input = ((255 - np.array(request.json, dtype=np.uint8)) / 255.0).reshape(28, 28)
 	input = np.array(request.json, dtype=np.uint8).reshape(28, 28)
 	input = 255 - input
-	cv2.imwrite('static/outputs/number.png', input)
-	pred_out, gradcam_img = make_heatmap('static/outputs/number.png', 'static/outputs')
+	cv2.imwrite('static/outputs/number.jpg', input)
+	# pred_out, gradcam_img = make_heatmap('static/outputs/number.png', 'static/outputs')
+	pred_out, _, _, _ = compute_saliency(img_file, outdir, layer_name)
 	return jsonify(results=pred_out.tolist())
 
 @app.route('/<path:path>')

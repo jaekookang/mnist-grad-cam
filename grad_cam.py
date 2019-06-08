@@ -65,7 +65,7 @@ def make_heatmap(input_file, out_dir, save_output=True):
         conv_layer_output_value[:,:,i] *= pooled_grads_value[i]
     # Calculate channel-wise mean for the heatmap activation
     heatmap = np.mean(conv_layer_output_value, axis=-1)
-    heatmap = np.maximum(heatmap, 0) # => max(heatmap, 0)
+    heatmap = np.maximum(heatmap, 0) # => like ReLU
     heatmap /= np.max(heatmap)
     # Resize to the original image
     heatmap_resized = cv2.resize(heatmap, img.shape) # (500, 500)

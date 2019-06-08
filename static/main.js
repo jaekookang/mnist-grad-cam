@@ -1,16 +1,25 @@
 // Modified from https://github.com/sugyan/tensorflow-mnist
+var clear_clicked = true
 
 class Main {
 	constructor() {
 		this.canvas = document.getElementById('main');
 		this.input = document.getElementById('input');
 		this.cam = document.getElementById('cam');
+		this.gcam = document.getElementById('guided-cam');
+		this.log = document.getElementById('log');
+
+		this.log.style.fontsize = '25px';
+
 		this.canvas.width = 449; // 16*28 + 1
 		this.canvas.height = 449; // 16*28 + 1
 		this.ctx = this.canvas.getContext('2d');
 		this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+		this.canvas.addEventListener('touchstart', this.onMouseDown.bind(this));
 		this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
+		this.canvas.addEventListener('touchend', this.onMouseUp.bind(this));
 		this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+
 		this.initialize();
 	}
 
@@ -36,27 +45,56 @@ class Main {
 			this.ctx.closePath();
 			this.ctx.stroke();
 		}
-		this.drawInput();
-		$('#output td').text('').removeClass('success');
+		// Clear canvas
+		var ctx_input = this.input.getContext('2d');
+		var ctx_cam = this.cam.getContext('2d');
+		var ctx_gcam = this.gcam.getContext('2d');
+
+		ctx_input.clearRect(0, 0, 140, 140);
+		ctx_cam.clearRect(0, 0, 140, 140);
+		ctx_gcam.clearRect(0, 0, 140, 140);
+
+		// Clear table
+		for (let j=0; j<10; j++) {
+			$('#output tr').eq(j+1).find('td').eq(0).text(j);
+			$('#output tr').eq(j+1).find('td').eq(1).text('');
+			$('#output tr').eq(j+1).find('td').eq(0).removeClass('success');
+			$('#output tr').eq(j+1).find('td').eq(1).removeClass('success');
+		}
+
+		if (!clear_clicked) {
+			this.drawInput();
+		}
+		
 	}
 
 	onMouseDown(e) {
 		// When pressed => get real-time position
+		var mouseX = e.clientX || e.pageX;
+		var mouseY = e.clientY || e.pageY;
 		this.canvas.style.cursor = 'default';
 		this.drawing = true;
-		this.prev = this.getPosition(e.clientX, e.clientY);
+		this.prev = this.getPosition(mouseX, mouseY);
+	}
+
+	onTouchStart(e) {
+		// When pressed => get real-time position
+		this.canvas.style.cursor = 'default';
+		this.drawing = true;
 	}
 
 	onMouseUp() {
 		// When released => draw input
 		this.drawing = false;
 		this.drawInput();
-		document.getElementById('log').innerHTML = 'Calculating...';
+		this.log.innerHTML = 'Calculating...';
 	}
 
 	onMouseMove(e) {
 		if (this.drawing) {
-			var curr = this.getPosition(e.clientX, e.clientY);
+			var mouseX = e.clientX || e.pageX;
+			var mouseY = e.clientY || e.pageY;
+			var curr = this.getPosition(mouseX, mouseY);
 			this.ctx.lineWidth = 16;
 			this.ctx.lineCap = 'round';
 			this.ctx.beginPath();
@@ -100,11 +138,11 @@ class Main {
 				return;
 			};
 			$.ajax({
-				url: '/api/mnist',
+				url: '/mnist',
 				method: 'POST',
 				contentType: 'application/json',
-				data: JSON.stringify(inputs),
-				success: (data) => {
+				data: JSON.stringify(inputs), // data sent to the server
+				success: (data) => {          // data retrieved from the server
 					console.log(data);
 					// Add prediction into the table
 					var max = 0;
@@ -124,31 +162,47 @@ class Main {
 						if (value > 999) {
 							text = '1.000';
 						}
-						// $('#output tr').eq(j+1).find('td').eq(0).text(j);
 						$('#output tr').eq(j+1).find('td').eq(1).text(text);
 					}
 					
 					for (let j=0; j<10; j++) {
 						if (j === max_index) {
+							$('#output tr').eq(j+1).find('td').eq(0).addClass('success');
 							$('#output tr').eq(j+1).find('td').eq(1).addClass('success');
 						} else {
+							$('#output tr').eq(j+1).find('td').eq(0).removeClass('success');
 							$('#output tr').eq(j+1).find('td').eq(1).removeClass('success');
 						}
 					}
+
 					// Make Grad-CAM image
 					var ctx_cam = this.cam.getContext('2d');
 					var cvs_cam = document.createElement('canvas');
 					var img_cam = new Image();
-					img_cam.src = 'static/outputs/number_gradcam.jpg';
+					// img_cam.src = 'static/outputs/number_gradcam.jpg';
+					img_cam.src = 'static/outputs/gradcam.jpg';
 					img_cam.onload = () => {
 						// cvs_cam.width = 160;
 						// cvs_cam.height = 160;
 						ctx_cam.drawImage(img_cam, 1, 1, 140, 140);
 					}
-					document.getElementById('log').innerHTML = 'Done';
+
+					// Make Guided Grad-CAM image
+					var ctx_gcam = this.gcam.getContext('2d');
+					var cvs_gcam = document.createElement('canvas');
+					var img_gcam = new Image();
+					// img_cam.src = 'static/outputs/number_gradcam.jpg';
+					img_gcam.src = 'static/outputs/guided_gradcam.jpg';
+					img_gcam.onload = () => {
+						// cvs_cam.width = 160;
+						// cvs_cam.height = 160;
+						ctx_gcam.drawImage(img_gcam, 1, 1, 140, 140);
+					}
+					this.log.innerHTML = 'Done';
+
 				},
 				error: (jqXHR) => {
-					document.getElementById('log').innerHTML = 'error:'+jqXHR.status;	
+					this.log.innerHTML = 'error:'+jqXHR.status;	
 				}
 			})
 		};
@@ -158,6 +212,7 @@ class Main {
 $(() => {
 	var main = new Main();
 	$('#clear').click(() => {
+		clear_clicked = true;
 		main.initialize();
 		document.getElementById('log').innerHTML = '';
 		clear_clicked = false;
