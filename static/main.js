@@ -143,7 +143,7 @@ class Main {
 				contentType: 'application/json',
 				data: JSON.stringify(inputs), // data sent to the server
 				success: (data) => {          // data retrieved from the server
-					console.log(data);
+					// console.log(data);
 					// Add prediction into the table
 					var max = 0;
 					var max_index = 0;
