@@ -2,10 +2,6 @@
 Grad-CAM visualization on the web
 
 2019-06-02
-
-## TODO
-- [] Add inference code
-- [] Make static/main.js
 '''
 import os
 import cv2
@@ -43,7 +39,7 @@ def mnist():
 
 @app.route('/<path:path>')
 def static_proxy(path):
-    # Serve everything in the 'static' folder
+    '''Serve everything in the 'static' folder'''
     return app.send_static_file(path)
 
 @app.route('/')

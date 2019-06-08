@@ -1,7 +1,7 @@
 '''
 Train MNIST dataset using CNN
 
-ref:
+## See:
 - https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
 '''
 from time import strftime, gmtime
