@@ -7,7 +7,6 @@ Grad-CAM visualizer
 - https://github.com/eclique/keras-gradcam (mostly used from)
 - https://github.com/fchollet
 '''
-import ipdb as pdb
 import numpy as np
 import cv2
 import sys
@@ -15,7 +14,6 @@ import os
 
 from keras.models import Model
 from keras.models import load_model
-from train import prepare_mnist
 from keras import backend as K
 from keras.backend import clear_session
 import tensorflow as tf

@@ -6,7 +6,6 @@ $ python grad_camp.py examples/01.jpg outputs
 
 2019-06-02 
 '''
-import ipdb as pdb
 import numpy as np
 import cv2
 import sys
@@ -14,7 +13,6 @@ import os
 
 from keras.models import Model
 from keras.models import load_model
-from train import prepare_mnist
 from keras import backend as K
 from keras.backend import clear_session
 
