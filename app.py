@@ -35,10 +35,10 @@ def mnist():
 	input = np.array(request.json, dtype=np.uint8).reshape(28, 28)
 	input = 255 - input
 	cv2.imwrite('static/outputs/number.jpg', input)
-	# pred_out, gradcam_img = make_heatmap('static/outputs/number.png', 'static/outputs')
-	pred_out, _, _, _ = compute_saliency(img_file, outdir, layer_name)
-	safe_rm('static/outputs/number.jpg')
+	pred_out, gradcam, gb, guided_gradcam = compute_saliency(
+		img_file, outdir, layer_name, save=True)
 	# safe_rm('static/outputs/guided_gradcam.jpg')
+	# return jsonify(results=[pred_out.tolist(), gradcam.tolist(), guided_gradcam.tolist()])
 	return jsonify(results=pred_out.tolist())
 
 @app.route('/<path:path>')

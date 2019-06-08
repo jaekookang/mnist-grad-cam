@@ -177,13 +177,9 @@ class Main {
 
 					// Make Grad-CAM image
 					var ctx_cam = this.cam.getContext('2d');
-					var cvs_cam = document.createElement('canvas');
 					var img_cam = new Image();
-					// img_cam.src = 'static/outputs/number_gradcam.jpg';
 					img_cam.src = 'static/outputs/gradcam.jpg';
 					img_cam.onload = () => {
-						// cvs_cam.width = 160;
-						// cvs_cam.height = 160;
 						ctx_cam.drawImage(img_cam, 1, 1, 140, 140);
 					}
 
@@ -191,11 +187,8 @@ class Main {
 					var ctx_gcam = this.gcam.getContext('2d');
 					var cvs_gcam = document.createElement('canvas');
 					var img_gcam = new Image();
-					// img_cam.src = 'static/outputs/number_gradcam.jpg';
 					img_gcam.src = 'static/outputs/guided_gradcam.jpg';
 					img_gcam.onload = () => {
-						// cvs_cam.width = 160;
-						// cvs_cam.height = 160;
 						ctx_gcam.drawImage(img_gcam, 1, 1, 140, 140);
 					}
 					this.log.innerHTML = 'Done';

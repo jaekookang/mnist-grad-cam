@@ -110,7 +110,7 @@ def grad_cam(input_model, img, which_class, layer_name):
     return cam
 
 
-def compute_saliency(img_file, outdir, layer_name, which_class=-1, save=True):
+def compute_saliency(img_file, outdir, layer_name, img_data=None, which_class=-1, save=True):
     '''
     Make visualizations
     which_class=-1 means the most probable class
@@ -119,7 +119,11 @@ def compute_saliency(img_file, outdir, layer_name, which_class=-1, save=True):
     model = build_model()
     guided_model = build_guided_model()
 
-    img, img_RGB = load_image(img_file)
+    if img_data == None:
+        img, img_RGB = load_image(img_file)
+    else:
+        img = img_data
+        img_RGB = np.stack((img,)*3, axis=-1)
 
     pred = model.predict(img)
     if which_class == -1:
