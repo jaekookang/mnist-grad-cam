@@ -207,7 +207,7 @@ class Main {
 			})
 		};
 		img.src = this.canvas.toDataURL();
-		fs.unlink('static/outputs/guided_gradcam.jpg');
+		// fs.unlink('static/outputs/guided_gradcam.jpg');
 	}
 }
 $(() => {
