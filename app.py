@@ -24,7 +24,10 @@ img_file = os.path.join(outdir, 'number.jpg')
 layer_name = 'conv2d_2'
 
 
-# Load model
+def safe_rm(file):
+    '''Remove directory if exists'''
+    if os.path.exists(file):
+        os.remove(file)
 
 @app.route('/mnist', methods=['POST'])
 def mnist():
@@ -34,6 +37,8 @@ def mnist():
 	cv2.imwrite('static/outputs/number.jpg', input)
 	# pred_out, gradcam_img = make_heatmap('static/outputs/number.png', 'static/outputs')
 	pred_out, _, _, _ = compute_saliency(img_file, outdir, layer_name)
+	safe_rm('static/outputs/number.jpg')
+	# safe_rm('static/outputs/guided_gradcam.jpg')
 	return jsonify(results=pred_out.tolist())
 
 @app.route('/<path:path>')

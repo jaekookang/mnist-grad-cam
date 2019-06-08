@@ -1,4 +1,5 @@
 // Modified from https://github.com/sugyan/tensorflow-mnist
+var fs = require('fs');
 var clear_clicked = true
 
 class Main {
@@ -207,6 +208,7 @@ class Main {
 			})
 		};
 		img.src = this.canvas.toDataURL();
+		fs.unlink('static/outputs/guided_gradcam.jpg');
 	}
 }
 $(() => {
